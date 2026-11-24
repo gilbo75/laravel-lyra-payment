@@ -1,0 +1,49 @@
+{
+    "name": "gilbo75/laravel-lyra-payment",
+    "description": "Laravel integration for the Lyra / PayZen hosted payment form (redirect form, IPN and return URL).",
+    "type": "library",
+    "license": "Apache-2.0",
+    "keywords": [
+        "laravel",
+        "lyra",
+        "payzen",
+        "payment",
+        "ipn"
+    ],
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.0|^13.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0|^11.0",
+        "phpunit/phpunit": "^11.5|^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LyraPayment\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LyraPayment\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LyraPayment\\LyraPaymentServiceProvider"
+            ],
+            "aliases": {
+                "LyraPayment": "LyraPayment\\Facades\\LyraPayment"
+            }
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    }
+}
