@@ -132,6 +132,15 @@ LYRA_REDIRECT_AFTER_RETURN=/checkout/complete
 
 The route then redirects there and flashes `session('lyra_payment')`, which contains `authentic`, `outcome`, `order_id`, `trans_id` and `message`. Use it for display only.
 
+To store this summary in a cookie instead of the session, set:
+
+```dotenv
+LYRA_RETURN_STORAGE=cookie
+LYRA_RETURN_COOKIE_LIFETIME=1 # minutes
+```
+
+The redirect then carries a `lyra_payment` cookie (name configurable with `LYRA_RETURN_COOKIE_NAME`) holding the same summary as JSON: `json_decode($request->cookie('lyra_payment'), true)`.
+
 Keep `LYRA_RETURN_MODE=GET` (the default). A POST from the gateway is a cross-site request, so the browser does not send the `SameSite=Lax` session cookie. Laravel would then start a fresh session and the customer would appear logged out.
 
 ## Configuration reference
@@ -145,7 +154,7 @@ composer install
 vendor/bin/phpunit
 ```
 
-35 tests, passing on Laravel 12 and 13 with PHP 8.3.
+36 tests, passing on Laravel 12 and 13 with PHP 8.3.
 
 ## Before going to production
 

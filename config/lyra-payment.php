@@ -75,6 +75,14 @@ return [
     | the session under the "lyra_payment" key. If null, a simple built-in
     | result page is shown.
     |
+    | return_storage: where that summary is stored for the redirect target:
+    |   session: flashed to the session under the "lyra_payment" key.
+    |   cookie:  JSON-encoded in a cookie (return_cookie_name) that lives
+    |            return_cookie_lifetime minutes. Useful when the session is
+    |            not available after the return (e.g. a cross-site POST).
+    |            With the "web" middleware the cookie is encrypted: read it
+    |            with json_decode($request->cookie('lyra_payment'), true).
+    |
     */
 
     'return_mode' => env('LYRA_RETURN_MODE', 'GET'),
@@ -82,6 +90,12 @@ return [
     'url_return' => env('LYRA_URL_RETURN'),
 
     'redirect_after_return' => env('LYRA_REDIRECT_AFTER_RETURN'),
+
+    'return_storage' => env('LYRA_RETURN_STORAGE', 'cookie'),
+
+    'return_cookie_name' => env('LYRA_RETURN_COOKIE_NAME', 'lyra_payment'),
+
+    'return_cookie_lifetime' => env('LYRA_RETURN_COOKIE_LIFETIME', 1),
 
     /*
     |--------------------------------------------------------------------------

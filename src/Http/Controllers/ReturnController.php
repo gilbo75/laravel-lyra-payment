@@ -28,16 +28,29 @@ class ReturnController
             })->toArray();
 
         if ($target = $lyra->config('redirect_after_return')) {
-            return redirect()->to($target)->with('lyra_payment', [
-                'authentic' => $payment->isAuthentic(),
+            $authentic = $payment->isAuthentic();
+            $summary = [
+                'authentic' => $authentic,
                 'outcome' => $payment->outcome(),
-                'order_id' => $payment->isAuthentic() ? $payment->orderId() : null,
-                'trans_id' => $payment->isAuthentic() ? $payment->transId() : null,
-                'trans_uuid' => $payment->isAuthentic() ? $payment->transUuid() : null,
-                'message' => $payment->isAuthentic() ? $payment->message() : null,
-                'trans_date' => $payment->isAuthentic() ? $payment->transDate() : null,
-                'ext_info' => $payment->isAuthentic() ? $extInfo : null,
-            ]);
+                'order_id' => $authentic ? $payment->orderId() : null,
+                'trans_id' => $authentic ? $payment->transId() : null,
+                'trans_uuid' => $authentic ? $payment->transUuid() : null,
+                'message' => $authentic ? $payment->message() : null,
+                'trans_date' => $authentic ? $payment->transDate() : null,
+                'ext_info' => $authentic ? $extInfo : null,
+            ];
+
+            $redirect = redirect()->to($target);
+
+            if ($lyra->config('return_storage', 'session') === 'cookie') {
+                return $redirect->cookie(
+                    $lyra->config('return_cookie_name', 'lyra_payment'),
+                    json_encode($summary),
+                    (int) $lyra->config('return_cookie_lifetime', 1)
+                );
+            }
+
+            return $redirect->with('lyra_payment', $summary);
         }
 
         return response()->view('lyra-payment::return', ['payment' => $payment])
