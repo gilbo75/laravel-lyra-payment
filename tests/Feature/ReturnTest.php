@@ -40,6 +40,24 @@ class ReturnTest extends TestCase
                 && $summary['order_id'] === 'ORDER-42');
     }
 
+    public function test_redirect_after_return_can_store_summary_in_cookie(): void
+    {
+        config([
+            'lyra-payment.redirect_after_return' => '/orders/thanks',
+            'lyra-payment.return_storage' => 'cookie',
+        ]);
+        $this->app->forgetInstance(\LyraPayment\LyraPayment::class);
+
+        $response = $this->get('/lyra-payment/return?' . http_build_query($this->gatewayFields()))
+            ->assertRedirect('/orders/thanks')
+            ->assertSessionMissing('lyra_payment')
+            ->assertCookie('lyra_payment');
+
+        $summary = json_decode($response->getCookie('lyra_payment')->getValue(), true);
+        $this->assertTrue($summary['authentic']);
+        $this->assertSame('ORDER-42', $summary['order_id']);
+    }
+
     public function test_invalid_signature_is_not_trusted(): void
     {
         Event::fake([CustomerReturned::class]);
